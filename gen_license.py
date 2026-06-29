@@ -17,6 +17,7 @@ import hashlib
 import json
 import secrets
 import sys
+import os
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -112,7 +113,111 @@ def export_activation(code: str, license_type: str, output: str | None = None):
         print(text)
 
 
+def _clear():
+    os.system("cls" if os.name == "nt" else "clear")
+
+def _pause():
+    input("\nاضغط Enter للعودة...")
+
+
+def interactive():
+    while True:
+        _clear()
+        print("=" * 50)
+        print("  📦 Archiver - مولد الترخيص (الوضع التفاعلي)")
+        print("=" * 50)
+        types_list = list(LICENSE_TYPES.keys())
+        print("\n🔹 اختر نوع الترخيص:")
+        for i, (key, val) in enumerate(LICENSE_TYPES.items(), 1):
+            print(f"   {i}. {val['name']} ({key})")
+        print(f"   {len(types_list)+1}. 🔍 التحقق من كود ترخيص")
+        print(f"   {len(types_list)+2}. 📤 تصدير ترخيص إلى ملف JSON")
+        print(f"   {len(types_list)+3}. 🚪 خروج")
+        try:
+            choice = input("\nأدخل رقم الاختيار: ").strip()
+            if not choice:
+                continue
+            choice = int(choice)
+        except ValueError:
+            _pause()
+            continue
+
+        if choice == len(types_list) + 3:
+            print("وداعاً!")
+            break
+
+        elif choice == len(types_list) + 1:
+            _clear()
+            print("=" * 50)
+            print("  🔍 التحقق من كود الترخيص")
+            print("=" * 50)
+            code = input("\nأدخل كود الترخيص: ").strip()
+            if code:
+                valid, msg = verify(code)
+                print(f"\n{'✅ صالح' if valid else '❌ غير صالح'}: {msg}")
+            _pause()
+            continue
+
+        elif choice == len(types_list) + 2:
+            _clear()
+            print("=" * 50)
+            print("  📤 تصدير ترخيص إلى ملف JSON")
+            print("=" * 50)
+            print("\n🔹 اختر نوع الترخيص:")
+            for i, (key, val) in enumerate(LICENSE_TYPES.items(), 1):
+                print(f"   {i}. {val['name']} ({key})")
+            try:
+                t = int(input("\nأدخل رقم النوع: ").strip())
+                if t < 1 or t > len(types_list):
+                    _pause()
+                    continue
+                license_type = types_list[t - 1]
+            except ValueError:
+                _pause()
+                continue
+            hw = input("رقم الجهاز (HWID) أو اتركه فارغاً: ").strip() or None
+            out = input("مسار ملف الإخراج (أو اتركه فارغاً للطباعة): ").strip() or None
+            code = generate(license_type, hw, None)
+            if code:
+                export_activation(code, license_type, out)
+            _pause()
+            continue
+
+        elif 1 <= choice <= len(types_list):
+            license_type = types_list[choice - 1]
+            _clear()
+            info = LICENSE_TYPES[license_type]
+            print("=" * 50)
+            print(f"  توليد ترخيص: {info['name']}")
+            print("=" * 50)
+            try:
+                count = int(input("\nعدد التراخيص (Enter = 1): ").strip() or "1")
+            except ValueError:
+                count = 1
+            hw = input("رقم الجهاز (HWID) أو اتركه فارغاً: ").strip() or None
+            out = input("مسار ملف JSON أو اتركه فارغاً: ").strip() or None
+            print()
+            for i in range(count):
+                label = f"[{i+1}/{count}] " if count > 1 else ""
+                code = generate(license_type, hw, None)
+                if code is None:
+                    continue
+                expiry = (datetime.now() + timedelta(days=info["days"], minutes=info["minutes"])).strftime("%Y-%m-%d")
+                print(f"{label}{code}  (ينتهي: {expiry})")
+                if out and count == 1:
+                    export_activation(code, license_type, out)
+            _pause()
+            continue
+        else:
+            _pause()
+            continue
+
+
 def main():
+    if len(sys.argv) == 1:
+        interactive()
+        return
+
     parser = argparse.ArgumentParser(
         prog="gen_license",
         description="Standalone license generator for arch system",

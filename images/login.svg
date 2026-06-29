@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <rect width="1280" height="720" fill="#0f172a"/>
+  <rect x="440" y="120" width="400" height="480" rx="16" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+  <circle cx="640" cy="210" r="40" fill="#f59e0b" opacity="0.2"/>
+  <text x="640" y="225" text-anchor="middle" fill="#f59e0b" font-size="36" font-family="sans-serif">📦</text>
+  <text x="640" y="280" text-anchor="middle" fill="#f8fafc" font-size="24" font-weight="bold" font-family="sans-serif">تسجيل الدخول</text>
+  <text x="640" y="310" text-anchor="middle" fill="#94a3b8" font-size="14" font-family="sans-serif">نظام الأرشفة الاحترافي</text>
+  <rect x="480" y="350" width="320" height="44" rx="10" fill="#334155"/>
+  <text x="500" y="378" fill="#64748b" font-size="14" font-family="sans-serif">اسم المستخدم</text>
+  <rect x="480" y="404" width="320" height="44" rx="10" fill="#334155"/>
+  <text x="500" y="432" fill="#64748b" font-size="14" font-family="sans-serif">كلمة المرور</text>
+  <rect x="480" y="468" width="320" height="44" rx="10" fill="#f59e0b"/>
+  <text x="640" y="496" text-anchor="middle" fill="#0f172a" font-size="16" font-weight="bold" font-family="sans-serif">دخول</text>
+  <text x="640" y="560" text-anchor="middle" fill="#475569" font-size="12" font-family="sans-serif">© 2026 Archiver Team</text>
+</svg>

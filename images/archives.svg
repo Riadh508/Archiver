@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <rect width="1280" height="720" fill="#0f172a"/>
+  <rect x="30" y="20" width="1220" height="60" rx="12" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+  <text x="60" y="58" fill="#f59e0b" font-size="22" font-weight="bold" font-family="sans-serif">📦 Archiver</text>
+  <text x="1000" y="58" fill="#94a3b8" font-size="14" font-family="sans-serif">لوحة التحكم</text>
+  <text x="1100" y="58" fill="#f59e0b" font-size="14" font-weight="bold" font-family="sans-serif">الأرشيفات</text>
+  <text x="1190" y="58" fill="#94a3b8" font-size="14" font-family="sans-serif">الإعدادات</text>
+  <rect x="30" y="100" width="1220" height="50" rx="10" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+  <rect x="50" y="112" width="200" height="28" rx="14" fill="#334155"/>
+  <text x="150" y="131" text-anchor="middle" fill="#94a3b8" font-size="13" font-family="sans-serif">جميع التصنيفات</text>
+  <rect x="270" y="112" width="200" height="28" rx="14" fill="#334155"/>
+  <text x="370" y="131" text-anchor="middle" fill="#94a3b8" font-size="13" font-family="sans-serif">بحث...</text>
+  <rect x="1000" y="112" width="230" height="28" rx="14" fill="#f59e0b"/>
+  <text x="1115" y="131" text-anchor="middle" fill="#0f172a" font-size="13" font-weight="bold" font-family="sans-serif">+ إضافة أرشيف</text>
+  <rect x="30" y="170" width="1220" height="40" rx="8" fill="#334155"/>
+  <text x="60" y="196" fill="#94a3b8" font-size="13" font-family="sans-serif">الاسم</text>
+  <text x="300" y="196" fill="#94a3b8" font-size="13" font-family="sans-serif">الحجم</text>
+  <text x="450" y="196" fill="#94a3b8" font-size="13" font-family="sans-serif">عدد الملفات</text>
+  <text x="600" y="196" fill="#94a3b8" font-size="13" font-family="sans-serif">التصنيف</text>
+  <text x="750" y="196" fill="#94a3b8" font-size="13" font-family="sans-serif">التاريخ</text>
+  <text x="950" y="196" fill="#94a3b8" font-size="13" font-family="sans-serif">الإجراءات</text>
+  <line x1="50" y1="218" x2="1230" y2="218" stroke="#334155" stroke-width="1"/>
+  <text x="60" y="252" fill="#e2e8f0" font-size="14" font-family="sans-serif">docs-backup.zip</text><text x="300" y="252" fill="#94a3b8" font-size="14">245 MB</text><text x="450" y="252" fill="#94a3b8" font-size="14">128</text><text x="600" y="252" fill="#f59e0b" font-size="14">مستندات</text><text x="750" y="252" fill="#94a3b8" font-size="14">2026-06-27</text><rect x="950" y="238" width="60" height="24" rx="6" fill="#10b981"/><text x="980" y="255" text-anchor="middle" fill="#fff" font-size="11">تحقق</text>
+  <line x1="50" y1="270" x2="1230" y2="270" stroke="#1e293b" stroke-width="1"/>
+  <text x="60" y="304" fill="#e2e8f0" font-size="14" font-family="sans-serif">projects.tar.gz</text><text x="300" y="304" fill="#94a3b8" font-size="14">1.2 GB</text><text x="450" y="304" fill="#94a3b8" font-size="14">45</text><text x="600" y="304" fill="#f59e0b" font-size="14">مشاريع</text><text x="750" y="304" fill="#94a3b8" font-size="14">2026-06-26</text><rect x="950" y="290" width="60" height="24" rx="6" fill="#f59e0b"/><text x="980" y="307" text-anchor="middle" fill="#0f172a" font-size="11">تنزيل</text>
+  <line x1="50" y1="322" x2="1230" y2="322" stroke="#1e293b" stroke-width="1"/>
+  <text x="60" y="356" fill="#e2e8f0" font-size="14" font-family="sans-serif">images.bztar</text><text x="300" y="356" fill="#94a3b8" font-size="14">890 MB</text><text x="450" y="356" fill="#94a3b8" font-size="14">230</text><text x="600" y="356" fill="#f59e0b" font-size="14">صور</text><text x="750" y="356" fill="#94a3b8" font-size="14">2026-06-25</text><rect x="950" y="342" width="60" height="24" rx="6" fill="#f59e0b"/><text x="980" y="359" text-anchor="middle" fill="#0f172a" font-size="11">تنزيل</text>
+</svg>

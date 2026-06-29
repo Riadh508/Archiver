@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Archiver — نظام الأرشفة الاحترافي</title>
+    <meta name="description" content="نظام أرشفة احترافي لإدارة وضغط وحماية ملفاتك بأمان مع واجهة ويب وأوامر سطر أوامر قوية">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Cairo', sans-serif; }
+        .gradient-text {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b, #fde68a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .stat-gradient {
+            background: linear-gradient(135deg, #fbbf24, #fde68a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .feature-card { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .feature-card:hover { border-color: rgba(245, 158, 11, 0.6); transform: translateY(-8px); box-shadow: 0 20px 40px rgba(245, 158, 11, 0.15); }
+        .feature-card:hover h3 { color: #fbbf24; }
+        .pricing-card { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .pricing-card:hover { transform: translateY(-10px); }
+        .pricing-card.popular {
+            background: linear-gradient(180deg, rgba(245, 158, 11, 0.15) 0%, rgba(245, 158, 11, 0.05) 100%);
+            border: 2px solid #f59e0b;
+            position: relative;
+        }
+        .pricing-card.popular::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(ellipse at top, rgba(245, 158, 11, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .btn-primary { transition: all 0.3s ease; }
+        .btn-primary:hover { transform: scale(1.05); box-shadow: 0 15px 35px rgba(245, 158, 11, 0.35); }
+        .screenshot-btn.active { background-color: #f59e0b; color: #0f172a; box-shadow: 0 8px 20px rgba(245, 158, 11, 0.3); }
+        .hamburger-line { transition: all 0.3s ease; }
+        .mobile-menu { max-height: 0; opacity: 0; overflow: hidden; transition: all 0.3s ease; }
+        .mobile-menu.open { max-height: 400px; opacity: 1; }
+        html { scroll-behavior: smooth; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1e293b; }
+        ::-webkit-scrollbar-thumb { background: #f59e0b; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #d97706; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in-up { animation: fadeInUp 0.7s ease-out forwards; }
+        @keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 25px rgba(245, 158, 11, 0.15); } 50% { box-shadow: 0 0 50px rgba(245, 158, 11, 0.25); } }
+        .pulse-glow { animation: pulse-glow 3s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
+        .animate-float { animation: float 4s ease-in-out infinite; }
+        .shimmer-text {
+            background: linear-gradient(90deg, #fbbf24 0%, #fde68a 25%, #fbbf24 50%, #fde68a 75%, #fbbf24 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shimmer 3s linear infinite;
+        }
+        @keyframes shimmer { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
+        .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%); z-index: 200; transition: all 0.4s ease; opacity: 0; pointer-events: none; }
+        .toast.show { opacity: 1; pointer-events: auto; }
+        .screenshot-container { position: relative; overflow: hidden; border-radius: 1rem; }
+        .screenshot-img { transition: transform 0.5s ease, opacity 0.3s ease; }
+        .screenshot-img:hover { transform: scale(1.02); }
+        .countdown-box { background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(245, 158, 11, 0.05)); border: 1px solid rgba(245, 158, 11, 0.3); }
+        .guarantee-badge { background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); }
+        .discount-badge { background: linear-gradient(135deg, #ef4444, #dc2626); animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        .lightbox { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.95); z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        .lightbox.active { opacity: 1; pointer-events: auto; }
+        .lightbox img { max-width: 90%; max-height: 90%; border-radius: 1rem; box-shadow: 0 25px 50px rgba(0,0,0,0.5); }
+        .step-card { transition: all 0.3s ease; }
+        .step-card:hover { border-color: rgba(245, 158, 11, 0.5); transform: translateY(-4px); }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white font-cairo">
+
+    <!-- Promotional Banner -->
+    <div class="bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 text-slate-900 py-3 px-4 text-center relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse"></div>
+        <p class="font-bold text-sm sm:text-base relative z-10">
+            🎉 إطلاق الإصدار v0.2.0 — خصم 50% على الترخيص السنوي 
+            <span class="mx-2">|</span>
+            <span class="text-slate-800">ينتهي خلال:</span>
+            <span id="countdown" class="font-extrabold text-slate-900">-- يوم --:--:--</span>
+        </p>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-50 bg-slate-900/95 backdrop-blur-md border-b border-slate-700/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <a href="#" class="flex items-center gap-2 text-amber-400 font-bold text-lg">
+                    <span class="text-2xl">📦</span>
+                    <span>Archiver</span>
+                </a>
+                <div class="hidden md:flex items-center gap-6">
+                    <a href="#features" class="text-slate-300 hover:text-amber-400 transition-colors text-sm font-medium">المميزات</a>
+                    <a href="#screenshots" class="text-slate-300 hover:text-amber-400 transition-colors text-sm font-medium">صور النظام</a>
+                    <a href="#how-it-works" class="text-slate-300 hover:text-amber-400 transition-colors text-sm font-medium">طريقة العمل</a>
+                    <a href="#pricing" class="text-slate-300 hover:text-amber-400 transition-colors text-sm font-medium">الأسعار</a>
+                    <a href="#contact" class="text-slate-300 hover:text-amber-400 transition-colors text-sm font-medium">تواصل معنا</a>
+                </div>
+                <a href="https://github.com/example/archiver/releases" target="_blank" rel="noopener noreferrer" class="hidden md:inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-5 py-2 rounded-lg transition-all hover:scale-105 text-sm shadow-lg shadow-amber-500/25">
+                    تحميل مجاني
+                </a>
+                <button id="hamburgerBtn" class="md:hidden flex flex-col gap-1.5 p-2" aria-label="فتح القائمة">
+                    <span id="line1" class="hamburger-line block w-6 h-0.5 bg-white"></span>
+                    <span id="line2" class="hamburger-line block w-6 h-0.5 bg-white"></span>
+                    <span id="line3" class="hamburger-line block w-6 h-0.5 bg-white"></span>
+                </button>
+            </div>
+        </div>
+        <div id="mobileMenu" class="mobile-menu md:hidden">
+            <div class="px-4 pb-4 flex flex-col gap-3 bg-slate-900/95 backdrop-blur-md">
+                <a href="#features" class="mobile-link text-slate-300 hover:text-amber-400 transition-colors py-2 border-b border-slate-700/50 text-sm font-medium">المميزات</a>
+                <a href="#screenshots" class="mobile-link text-slate-300 hover:text-amber-400 transition-colors py-2 border-b border-slate-700/50 text-sm font-medium">صور النظام</a>
+                <a href="#how-it-works" class="mobile-link text-slate-300 hover:text-amber-400 transition-colors py-2 border-b border-slate-700/50 text-sm font-medium">طريقة العمل</a>
+                <a href="#pricing" class="mobile-link text-slate-300 hover:text-amber-400 transition-colors py-2 border-b border-slate-700/50 text-sm font-medium">الأسعار</a>
+                <a href="#contact" class="mobile-link text-slate-300 hover:text-amber-400 transition-colors py-2 border-b border-slate-700/50 text-sm font-medium">تواصل معنا</a>
+                <a href="https://github.com/example/archiver/releases" target="_blank" rel="noopener noreferrer" class="mobile-link bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-5 py-2.5 rounded-lg text-center text-sm mt-2">تحميل مجاني</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="pt-16 pb-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-amber-500/5 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute top-40 right-0 w-[400px] h-[400px] bg-amber-500/5 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="max-w-5xl mx-auto relative z-10">
+            <div class="text-center">
+                <div class="flex flex-wrap justify-center gap-3 mb-8">
+                    <span class="inline-flex items-center gap-1.5 bg-green-500/10 border border-green-500/30 rounded-full px-4 py-1.5 text-green-400 text-xs font-medium">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                        100% مجاني — مفتوح المصدر
+                    </span>
+                    <span class="inline-flex items-center gap-1.5 bg-blue-500/10 border border-blue-500/30 rounded-full px-4 py-1.5 text-blue-400 text-xs font-medium">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/></svg>
+                        دعم فني 24/7
+                    </span>
+                    <span class="inline-flex items-center gap-1.5 bg-amber-500/10 border border-amber-500/30 rounded-full px-4 py-1.5 text-amber-400 text-xs font-medium">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                        تشفير AES-128 متقدم
+                    </span>
+                </div>
+
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight mb-6">
+                    نظام الأرشفة
+                    <span class="block shimmer-text mt-2">الاحترافي</span>
+                </h1>
+
+                <p class="text-slate-400 text-lg sm:text-xl max-w-2xl mx-auto mb-8 leading-relaxed">
+                    حل متكامل لضغط وأرشفة وحماية ملفاتك — مع واجهة ويب سهلة وأوامر سطر أوامر قوية، وتشفير عسكري المستوى
+                </p>
+
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
+                    <a href="https://github.com/example/archiver/releases" target="_blank" rel="noopener noreferrer" class="btn-primary bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-8 py-4 rounded-xl text-lg shadow-lg shadow-amber-500/25 flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                        تحميل النسخة المجانية
+                    </a>
+                    <a href="#screenshots" class="border border-slate-600 hover:border-amber-500 text-slate-300 hover:text-amber-400 font-medium px-8 py-4 rounded-xl transition-all text-lg flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                        مشاهدة صور النظام
+                    </a>
+                </div>
+
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-6 max-w-3xl mx-auto">
+                    <div class="text-center p-4 rounded-xl bg-slate-800/30 border border-slate-700/30">
+                        <div class="text-3xl sm:text-4xl font-extrabold stat-gradient">100%</div>
+                        <div class="text-slate-400 text-sm mt-1">مكتبات قياسية</div>
+                    </div>
+                    <div class="text-center p-4 rounded-xl bg-slate-800/30 border border-slate-700/30">
+                        <div class="text-3xl sm:text-4xl font-extrabold stat-gradient">5</div>
+                        <div class="text-slate-400 text-sm mt-1">صيغ ضغط</div>
+                    </div>
+                    <div class="text-center p-4 rounded-xl bg-slate-800/30 border border-slate-700/30">
+                        <div class="text-3xl sm:text-4xl font-extrabold stat-gradient">AES-128</div>
+                        <div class="text-slate-400 text-sm mt-1">تشفير فيرنيه</div>
+                    </div>
+                    <div class="text-center p-4 rounded-xl bg-slate-800/30 border border-slate-700/30">
+                        <div class="text-3xl sm:text-4xl font-extrabold stat-gradient">24/7</div>
+                        <div class="text-slate-400 text-sm mt-1">دعم فني</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-20 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-14">
+                <span class="inline-block bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-bold px-4 py-1.5 rounded-full mb-4">مميزات حصرية</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold mb-4">كل ما تحتاجه لأرشفة ملفاتك</h2>
+                <p class="text-slate-400 text-lg max-w-xl mx-auto">أدوات قوية تجعل أرشفة وحماية بياناتك أسهل وأكثر أماناً</p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="feature-card bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6 cursor-pointer">
+                    <div class="w-14 h-14 bg-amber-500/10 rounded-xl flex items-center justify-center text-3xl mb-4">🗜️</div>
+                    <h3 class="text-xl font-bold mb-2 transition-colors">ضغط متعدد الصيغ</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">يدعم ZIP, TAR, GZTAR, BZTAR, XZTAR مع خيارات ضغط قابلة للتعديل (0-9)</p>
+                </div>
+                <div class="feature-card bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6 cursor-pointer">
+                    <div class="w-14 h-14 bg-amber-500/10 rounded-xl flex items-center justify-center text-3xl mb-4">🔐</div>
+                    <h3 class="text-xl font-bold mb-2 transition-colors">تشفير فيرنيه</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">تشفير AES-128-CBC + HMAC لحماية الأرشيفات بكلمة مرور آمنة</p>
+                </div>
+                <div class="feature-card bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6 cursor-pointer">
+                    <div class="w-14 h-14 bg-amber-500/10 rounded-xl flex items-center justify-center text-3xl mb-4">✅</div>
+                    <h3 class="text-xl font-bold mb-2 transition-colors">التحقق من السلامة</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">HMAC-SHA256 + SHA-256 للتحقق من سلامة الأرشيفات والتأكد من عدم العبث بها</p>
+                </div>
+                <div class="feature-card bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6 cursor-pointer">
+                    <div class="w-14 h-14 bg-amber-500/10 rounded-xl flex items-center justify-center text-3xl mb-4">🌐</div>
+                    <h3 class="text-xl font-bold mb-2 transition-colors">واجهة ويب متكاملة</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">لوحة تحكم ويب كاملة بدون الحاجة لأي مكتبات خارجية — يعمل فوراً</p>
+                </div>
+                <div class="feature-card bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6 cursor-pointer">
+                    <div class="w-14 h-14 bg-amber-500/10 rounded-xl flex items-center justify-center text-3xl mb-4">🖥️</div>
+                    <h3 class="text-xl font-bold mb-2 transition-colors">سطر أوامر قوي</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">16 أمراً لإنشاء وإدارة واستخراج والبحث في الأرشيفات بكل سهولة</p>
+                </div>
+                <div class="feature-card bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6 cursor-pointer">
+                    <div class="w-14 h-14 bg-amber-500/10 rounded-xl flex items-center justify-center text-3xl mb-4">🛡️</div>
+                    <h3 class="text-xl font-bold mb-2 transition-colors">أمان متعدد الطبقات</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">حماية ضد Zip-Slip، حقن SQL، تسريب المسارات — مع تدقيق أمني كامل</p>
+                </div>
+                <div class="feature-card bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6 cursor-pointer">
+                    <div class="w-14 h-14 bg-amber-500/10 rounded-xl flex items-center justify-center text-3xl mb-4">📊</div>
+                    <h3 class="text-xl font-bold mb-2 transition-colors">تقارير وإحصائيات</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">إحصائيات فورية عن الأرشيفات والمساحة والمستخدمين في لوحة التحكم</p>
+                </div>
+                <div class="feature-card bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6 cursor-pointer">
+                    <div class="w-14 h-14 bg-amber-500/10 rounded-xl flex items-center justify-center text-3xl mb-4">👥</div>
+                    <h3 class="text-xl font-bold mb-2 transition-colors">إدارة المستخدمين</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">نظام صلاحيات كامل (مدير/مستخدم) مع قاعدة بيانات آمنة</p>
+                </div>
+                <div class="feature-card bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6 cursor-pointer">
+                    <div class="w-14 h-14 bg-amber-500/10 rounded-xl flex items-center justify-center text-3xl mb-4">💾</div>
+                    <h3 class="text-xl font-bold mb-2 transition-colors">نسخ احتياطي</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">إنشاء واستعادة نسخ احتياطية لقاعدة البيانات بضغطة زر</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Screenshots Section -->
+    <section id="screenshots" class="py-20 px-4 sm:px-6 lg:px-8 bg-slate-800/30">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-12">
+                <span class="inline-block bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-bold px-4 py-1.5 rounded-full mb-4">معاينة مباشرة</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold mb-4">صور واجهات النظام</h2>
+                <p class="text-slate-400 text-lg">اضغط على أي صورة لعرضها بحجم أكبر</p>
+            </div>
+
+            <div class="screenshot-container bg-slate-900 rounded-2xl overflow-hidden shadow-2xl mb-8 cursor-pointer" onclick="openLightbox()">
+                <div class="bg-slate-800 px-4 py-3 flex items-center gap-3 border-b border-slate-700">
+                    <div class="flex gap-2"><span class="w-3 h-3 rounded-full bg-red-500"></span><span class="w-3 h-3 rounded-full bg-yellow-500"></span><span class="w-3 h-3 rounded-full bg-green-500"></span></div>
+                    <div class="flex-1 text-center"><span id="screenshotWindowTitle" class="text-sm text-slate-400">Archiver — تسجيل الدخول</span></div>
+                    <div class="text-slate-500 text-xs">اضغط للتكبير</div>
+                </div>
+                <div class="relative aspect-video bg-slate-950">
+                    <img id="mainScreenshot" src="images/login.svg" alt="صورة النظام" class="screenshot-img w-full h-full object-contain">
+                    <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-slate-900 via-slate-900/90 to-transparent p-6">
+                        <h3 id="screenshotTitle" class="text-2xl font-bold text-white">تسجيل الدخول</h3>
+                        <p id="screenshotDesc" class="text-slate-300 text-sm mt-1">واجهة تسجيل دخول آمنة وجذابة</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-3 gap-3">
+                <button onclick="changeScreenshot(0)" class="screenshot-btn active group relative overflow-hidden rounded-xl aspect-video bg-slate-800 border-2 border-transparent hover:border-amber-500 transition-all"><img src="images/login.svg" alt="تسجيل الدخول" class="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-opacity"><span class="absolute inset-0 flex items-center justify-center bg-black/50 text-xs font-medium opacity-0 group-hover:opacity-100">تسجيل الدخول</span></button>
+                <button onclick="changeScreenshot(1)" class="screenshot-btn group relative overflow-hidden rounded-xl aspect-video bg-slate-800 border-2 border-transparent hover:border-amber-500 transition-all"><img src="images/dashboard.svg" alt="لوحة التحكم" class="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-opacity"><span class="absolute inset-0 flex items-center justify-center bg-black/50 text-xs font-medium opacity-0 group-hover:opacity-100">لوحة التحكم</span></button>
+                <button onclick="changeScreenshot(2)" class="screenshot-btn group relative overflow-hidden rounded-xl aspect-video bg-slate-800 border-2 border-transparent hover:border-amber-500 transition-all"><img src="images/archives.svg" alt="إدارة الأرشيفات" class="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-opacity"><span class="absolute inset-0 flex items-center justify-center bg-black/50 text-xs font-medium opacity-0 group-hover:opacity-100">الأرشيفات</span></button>
+                <button onclick="changeScreenshot(3)" class="screenshot-btn group relative overflow-hidden rounded-xl aspect-video bg-slate-800 border-2 border-transparent hover:border-amber-500 transition-all"><img src="images/settings.svg" alt="الإعدادات" class="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-opacity"><span class="absolute inset-0 flex items-center justify-center bg-black/50 text-xs font-medium opacity-0 group-hover:opacity-100">الإعدادات</span></button>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section id="how-it-works" class="py-20 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-14">
+                <span class="inline-block bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-bold px-4 py-1.5 rounded-full mb-4">طريقة العمل</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold mb-4">ابدأ في 3 خطوات</h2>
+                <p class="text-slate-400 text-lg">من التثبيت إلى الأرشفة في دقائق</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="step-card bg-slate-800/50 border border-slate-700/50 rounded-2xl p-8 text-center">
+                    <div class="w-16 h-16 bg-amber-500/20 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-5">📥</div>
+                    <div class="inline-block bg-amber-500/10 text-amber-400 text-xs font-bold px-3 py-1 rounded-full mb-3">الخطوة 1</div>
+                    <h3 class="text-xl font-bold mb-2">قم بالتثبيت</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">حمّل المثبت بنقرة واحدة أو شغّل مباشرة عبر Python — لا حاجة لمكتبات خارجية</p>
+                </div>
+                <div class="step-card bg-slate-800/50 border border-slate-700/50 rounded-2xl p-8 text-center">
+                    <div class="w-16 h-16 bg-amber-500/20 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-5">⚙️</div>
+                    <div class="inline-block bg-amber-500/10 text-amber-400 text-xs font-bold px-3 py-1 rounded-full mb-3">الخطوة 2</div>
+                    <h3 class="text-xl font-bold mb-2">اختر واجهتك</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">استخدم واجهة الويب من متصفحك أو أوامر سطر الأوامر — حسب ما تفضل</p>
+                </div>
+                <div class="step-card bg-slate-800/50 border border-slate-700/50 rounded-2xl p-8 text-center">
+                    <div class="w-16 h-16 bg-amber-500/20 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-5">📦</div>
+                    <div class="inline-block bg-amber-500/10 text-amber-400 text-xs font-bold px-3 py-1 rounded-full mb-3">الخطوة 3</div>
+                    <h3 class="text-xl font-bold mb-2">ابدأ الأرشفة</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">أضف ملفاتك، اختر صيغة الضغط، وقم بالتشفير — كل شيء بضغطة زر</p>
+                </div>
+            </div>
+            <div class="mt-12 text-center">
+                <div class="inline-flex items-center gap-2 bg-slate-800/50 border border-slate-700/50 rounded-2xl p-4">
+                    <span class="text-2xl">🐍</span>
+                    <div class="text-right">
+                        <div class="text-sm text-slate-400">ابدأ فوراً بسطر واحد:</div>
+                        <code class="text-amber-400 font-mono text-sm">python -m arch web</code>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="py-20 px-4 sm:px-6 lg:px-8 bg-slate-800/30">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-14">
+                <span class="inline-block bg-green-500/10 border border-green-500/30 text-green-400 text-xs font-bold px-4 py-1.5 rounded-full mb-4">عرض خاص</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold mb-4">خطط الأسعار</h2>
+                <p class="text-slate-400 text-lg">اختر الخطة المناسبة لاحتياجاتك — جميعها تشمل الدعم الفني المجاني</p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+                <div class="pricing-card bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6 lg:p-8">
+                    <div class="text-center mb-6">
+                        <h3 class="text-xl font-bold mb-2">المصدر المفتوح</h3>
+                        <div class="flex items-baseline justify-center gap-1"><span class="text-4xl font-extrabold text-amber-400">مجاني</span></div>
+                        <p class="text-slate-400 text-sm mt-1">للأبد</p>
+                    </div>
+                    <ul class="space-y-3 mb-6">
+                        <li class="flex items-center gap-2 text-slate-300 text-sm"><span class="text-green-500">✓</span>جميع مميزات CLI</li>
+                        <li class="flex items-center gap-2 text-slate-300 text-sm"><span class="text-green-500">✓</span>واجهة ويب كاملة</li>
+                        <li class="flex items-center gap-2 text-slate-300 text-sm"><span class="text-green-500">✓</span>تحديثات مجانية</li>
+                        <li class="flex items-center gap-2 text-slate-300 text-sm"><span class="text-green-500">✓</span>دعم مجتمعي</li>
+                    </ul>
+                    <a href="https://github.com/example/archiver" target="_blank" rel="noopener noreferrer" class="block text-center py-3 rounded-xl font-bold text-sm bg-slate-700 hover:bg-slate-600 text-white transition">حمّل مجاناً</a>
+                </div>
+                <div class="pricing-card bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6 lg:p-8">
+                    <div class="text-center mb-6">
+                        <h3 class="text-xl font-bold mb-2">الترخيص المهني</h3>
+                        <div class="flex items-baseline justify-center gap-1"><span class="text-4xl font-extrabold text-amber-400">$29</span><span class="text-slate-400 text-sm">/شهرياً</span></div>
+                        <p class="text-slate-500 text-xs mt-1 line-through">$49</p>
+                    </div>
+                    <ul class="space-y-3 mb-6">
+                        <li class="flex items-center gap-2 text-slate-300 text-sm"><span class="text-green-500">✓</span>كل مميزات المجاني</li>
+                        <li class="flex items-center gap-2 text-slate-300 text-sm"><span class="text-green-500">✓</span>دعم فني 24/7</li>
+                        <li class="flex items-center gap-2 text-slate-300 text-sm"><span class="text-green-500">✓</span>تشفير متقدم</li>
+                        <li class="flex items-center gap-2 text-slate-300 text-sm"><span class="text-green-500">✓</span>نسخ احتياطي سحابي</li>
+                    </ul>
+                    <a href="#contact" class="block text-center py-3 rounded-xl font-bold text-sm bg-slate-700 hover:bg-slate-600 text-white transition">اشترك الآن</a>
+                </div>
+                <div class="pricing-card popular rounded-2xl p-6 lg:p-8 relative overflow-hidden">
+                    <div class="discount-badge absolute top-4 left-4 text-white text-xs font-bold px-3 py-1 rounded-full">خصم 50%</div>
+                    <div class="text-center mb-6">
+                        <div class="inline-block bg-amber-500 text-slate-900 text-xs font-bold px-3 py-1 rounded-full mb-3">الأكثر طلباً</div>
+                        <h3 class="text-xl font-bold mb-2">الترخيص السنوي</h3>
+                        <div class="flex items-baseline justify-center gap-1"><span class="text-4xl font-extrabold text-amber-400">$149</span><span class="text-slate-400 text-sm">/سنوياً</span></div>
+                        <p class="text-slate-500 text-xs mt-1 line-through">$299</p>
+                        <p class="text-green-400 text-xs mt-1">وفر $150 سنوياً</p>
+                    </div>
+                    <ul class="space-y-3 mb-6">
+                        <li class="flex items-center gap-2 text-slate-300 text-sm"><span class="text-green-500">✓</span>كل مميزات المهني</li>
+                        <li class="flex items-center gap-2 text-slate-300 text-sm"><span class="text-green-500">✓</span>تحديثات مدى الحياة</li>
+                        <li class="flex items-center gap-2 text-slate-300 text-sm"><span class="text-green-500">✓</span>دعم فني أولوية</li>
+                        <li class="flex items-center gap-2 text-slate-300 text-sm"><span class="text-green-500">✓</span>نسخ احتياطي تلقائي</li>
+                        <li class="flex items-center gap-2 text-slate-300 text-sm"><span class="text-green-500">✓</span>تقارير متقدمة</li>
+                        <li class="flex items-center gap-2 text-slate-300 text-sm"><span class="text-green-500">✓</span>ضمان استرداد 30 يوم</li>
+                    </ul>
+                    <a href="#contact" class="block text-center py-3 rounded-xl font-bold text-sm bg-amber-500 hover:bg-amber-600 text-slate-900 transition shadow-lg shadow-amber-500/25">اشترك الآن</a>
+                </div>
+            </div>
+            <div class="mt-12 text-center">
+                <div class="guarantee-badge inline-flex items-center gap-3 text-white px-6 py-3 rounded-xl">
+                    <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                    <div class="text-right">
+                        <div class="font-bold">ضمان استرداد الأموال</div>
+                        <div class="text-xs opacity-90">30 يوم بدون أسئلة</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CLI Reference Section -->
+    <section id="cli" class="py-20 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-14">
+                <span class="inline-block bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-bold px-4 py-1.5 rounded-full mb-4">سطر الأوامر</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold mb-4">أوامر قوية في متناول يدك</h2>
+                <p class="text-slate-400 text-lg">16 أمراً لإدارة كاملة دون لمس الفأرة</p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-slate-800/50 border border-slate-700/50 rounded-xl p-4">
+                    <code class="text-amber-400 font-mono text-sm font-bold">arch add</code>
+                    <p class="text-slate-400 text-xs mt-1">إنشاء أرشيف جديد</p>
+                </div>
+                <div class="bg-slate-800/50 border border-slate-700/50 rounded-xl p-4">
+                    <code class="text-amber-400 font-mono text-sm font-bold">arch list</code>
+                    <p class="text-slate-400 text-xs mt-1">عرض الأرشيفات</p>
+                </div>
+                <div class="bg-slate-800/50 border border-slate-700/50 rounded-xl p-4">
+                    <code class="text-amber-400 font-mono text-sm font-bold">arch extract</code>
+                    <p class="text-slate-400 text-xs mt-1">استخراج أرشيف</p>
+                </div>
+                <div class="bg-slate-800/50 border border-slate-700/50 rounded-xl p-4">
+                    <code class="text-amber-400 font-mono text-sm font-bold">arch search</code>
+                    <p class="text-slate-400 text-xs mt-1">بحث في الأرشيفات</p>
+                </div>
+                <div class="bg-slate-800/50 border border-slate-700/50 rounded-xl p-4">
+                    <code class="text-amber-400 font-mono text-sm font-bold">arch verify</code>
+                    <p class="text-slate-400 text-xs mt-1">التحقق من السلامة</p>
+                </div>
+                <div class="bg-slate-800/50 border border-slate-700/50 rounded-xl p-4">
+                    <code class="text-amber-400 font-mono text-sm font-bold">arch lock</code>
+                    <p class="text-slate-400 text-xs mt-1">تشفير أرشيف</p>
+                </div>
+                <div class="bg-slate-800/50 border border-slate-700/50 rounded-xl p-4">
+                    <code class="text-amber-400 font-mono text-sm font-bold">arch unlock</code>
+                    <p class="text-slate-400 text-xs mt-1">فك تشفير أرشيف</p>
+                </div>
+                <div class="bg-slate-800/50 border border-slate-700/50 rounded-xl p-4">
+                    <code class="text-amber-400 font-mono text-sm font-bold">arch web</code>
+                    <p class="text-slate-400 text-xs mt-1">تشغيل واجهة الويب</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Download Section -->
+    <section id="download" class="py-20 px-4 sm:px-6 lg:px-8 bg-slate-800/30">
+        <div class="max-w-4xl mx-auto text-center">
+            <span class="inline-block bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-bold px-4 py-1.5 rounded-full mb-4">ابدأ الآن</span>
+            <h2 class="text-3xl sm:text-4xl font-extrabold mb-4">حمّل Archiver مجاناً</h2>
+            <p class="text-slate-400 text-lg mb-10">مفتوح المصدر بالكامل — شغّل فوراً بدون أي تبعيات خارجية</p>
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a href="https://github.com/example/archiver/releases" target="_blank" rel="noopener noreferrer" class="btn-primary bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-12 py-4 rounded-xl text-lg shadow-lg shadow-amber-500/25 inline-flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+                    تحميل من GitHub
+                </a>
+                <code class="bg-slate-900 border border-slate-700/50 text-amber-400 px-4 py-3 rounded-xl text-sm font-mono">pip install archiver</code>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-14">
+                <span class="inline-block bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-bold px-4 py-1.5 rounded-full mb-4">تواصل معنا</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold mb-4">نحن هنا لمساعدتك</h2>
+                <p class="text-slate-400 text-lg">تواصل معنا في أي وقت — فريقنا متاح على مدار الساعة</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="space-y-6">
+                    <div class="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6">
+                        <h3 class="font-bold text-lg mb-4 text-amber-400">معلومات التواصل</h3>
+                        <div class="space-y-4">
+                            <a href="https://github.com/example/archiver" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 text-slate-300 hover:text-amber-400 transition-colors p-3 rounded-xl bg-slate-700/30">
+                                <span class="text-3xl">💻</span>
+                                <div><div class="font-medium">GitHub</div><div class="text-sm text-slate-400">/example/archiver</div></div>
+                            </a>
+                            <a href="https://wa.me/967770240572" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 text-slate-300 hover:text-green-400 transition-colors p-3 rounded-xl bg-slate-700/30">
+                                <span class="text-3xl">💬</span>
+                                <div><div class="font-medium">واتساب</div><div class="text-sm text-slate-400" dir="ltr">+967 770 240 572</div></div>
+                            </a>
+                            <a href="tel:+967770240572" class="flex items-center gap-3 text-slate-300 hover:text-amber-400 transition-colors p-3 rounded-xl bg-slate-700/30">
+                                <span class="text-3xl">📞</span>
+                                <div><div class="font-medium">هاتف</div><div class="text-sm text-slate-400" dir="ltr">+967 770 240 572</div></div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6">
+                    <h3 class="font-bold text-lg mb-6 text-amber-400">أرسل لنا رسالة</h3>
+                    <form id="contactForm" class="space-y-4">
+                        <div><label class="block text-sm text-slate-400 mb-1.5">الاسم الكامل</label><input type="text" required placeholder="أدخل اسمك" class="w-full bg-slate-700/50 border border-slate-600/50 rounded-xl px-4 py-3 text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 transition-colors text-sm"></div>
+                        <div><label class="block text-sm text-slate-400 mb-1.5">البريد الإلكتروني</label><input type="email" required placeholder="أدخل بريدك الإلكتروني" class="w-full bg-slate-700/50 border border-slate-600/50 rounded-xl px-4 py-3 text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 transition-colors text-sm"></div>
+                        <div><label class="block text-sm text-slate-400 mb-1.5">الرسالة</label><textarea required rows="4" placeholder="اكتب رسالتك هنا..." class="w-full bg-slate-700/50 border border-slate-600/50 rounded-xl px-4 py-3 text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 transition-colors text-sm resize-none"></textarea></div>
+                        <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold py-3 rounded-xl transition-all hover:scale-[1.02] text-sm shadow-lg shadow-amber-500/25">إرسال الرسالة</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 border-t border-slate-700/50 py-10 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-6xl mx-auto">
+            <div class="flex flex-col items-center gap-4 text-center">
+                <div class="flex items-center gap-2 text-amber-400 font-bold text-lg">
+                    <span class="text-2xl">📦</span>
+                    <span>Archiver — نظام الأرشفة الاحترافي</span>
+                </div>
+                <p class="text-slate-400 text-sm">تطوير وبرمجة: <span class="text-amber-400 font-medium">Archiver Team</span></p>
+                <div class="text-slate-500 text-xs">
+                    <p>© 2026 جميع الحقوق محفوظة | الإصدار v0.2.0</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <div id="toast" class="toast">
+        <div class="bg-green-500/10 border border-green-500/30 rounded-lg p-4 text-green-400 text-sm text-center backdrop-blur-md shadow-lg">تم إرسال رسالتك بنجاح! سنتواصل معك قريباً.</div>
+    </div>
+
+    <!-- Lightbox -->
+    <div id="lightbox" class="lightbox" onclick="closeLightbox()">
+        <button class="absolute top-4 right-4 text-white bg-slate-800 hover:bg-slate-700 rounded-full p-2 z-10" onclick="closeLightbox()"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+        <img id="lightboxImg" src="" alt="صورة مكبرة">
+    </div>
+
+    <script>
+        const images = [
+            { file: 'images/login.svg', title: 'تسجيل الدخول', desc: 'واجهة تسجيل دخول آمنة مع نظام حماية متقدم' },
+            { file: 'images/dashboard.svg', title: 'لوحة التحكم', desc: 'إحصائيات فورية وشاملة عن حالة النظام' },
+            { file: 'images/archives.svg', title: 'إدارة الأرشيفات', desc: 'إدارة كاملة لجميع الأرشيفات مع بحث وتصنيف' },
+            { file: 'images/settings.svg', title: 'الإعدادات', desc: 'إعدادات النظام والترخيص والنسخ الاحتياطي' }
+        ];
+        let activeScreenshot = 0;
+
+        function changeScreenshot(index) {
+            activeScreenshot = index;
+            const mainImg = document.getElementById('mainScreenshot');
+            const title = document.getElementById('screenshotTitle');
+            const desc = document.getElementById('screenshotDesc');
+            const windowTitle = document.getElementById('screenshotWindowTitle');
+            const lightboxImg = document.getElementById('lightboxImg');
+            if (mainImg) { mainImg.style.opacity = '0'; setTimeout(() => { mainImg.src = images[index].file; mainImg.style.opacity = '1'; }, 150); }
+            if (title) title.textContent = images[index].title;
+            if (desc) desc.textContent = images[index].desc;
+            if (windowTitle) windowTitle.textContent = "Archiver — " + images[index].title;
+            if (lightboxImg) lightboxImg.src = images[index].file;
+            document.querySelectorAll('.screenshot-btn').forEach((btn, i) => {
+                btn.classList.toggle('active', i === index);
+                if (i === index) btn.classList.add('border-amber-500');
+                else btn.classList.remove('border-amber-500');
+            });
+        }
+
+        function openLightbox() { document.getElementById('lightbox').classList.add('active'); document.body.style.overflow = 'hidden'; }
+        function closeLightbox() { document.getElementById('lightbox').classList.remove('active'); document.body.style.overflow = ''; }
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLightbox(); });
+
+        let targetDate = null;
+        function initRealMonthTarget() {
+            const now = new Date();
+            targetDate = new Date(now);
+            targetDate.setMonth(targetDate.getMonth() + 1);
+            targetDate.setHours(23, 59, 59, 999);
+        }
+        initRealMonthTarget();
+
+        function updateCountdown() {
+            if (!targetDate) return;
+            const now = new Date();
+            const diffMs = targetDate - now;
+            const countdownElement = document.getElementById('countdown');
+            if (diffMs <= 0) { if (countdownElement) countdownElement.textContent = "انتهى العرض"; return; }
+            const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diffMs % (1000 * 60)) / 1000);
+            countdownElement.textContent = `${days} يوم ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+
+        const hamburgerBtn = document.getElementById('hamburgerBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const line1 = document.getElementById('line1'), line2 = document.getElementById('line2'), line3 = document.getElementById('line3');
+        let menuOpen = false;
+        hamburgerBtn?.addEventListener('click', () => {
+            menuOpen = !menuOpen;
+            mobileMenu?.classList.toggle('open');
+            if (menuOpen) {
+                line1.style.transform = 'rotate(45deg) translate(4px, 4px)';
+                line2.style.opacity = '0';
+                line3.style.transform = 'rotate(-45deg) translate(4px, -4px)';
+            } else {
+                line1.style.transform = '';
+                line2.style.opacity = '';
+                line3.style.transform = '';
+            }
+        });
+        document.querySelectorAll('.mobile-link').forEach(link => link.addEventListener('click', () => {
+            menuOpen = false;
+            mobileMenu?.classList.remove('open');
+            line1.style.transform = ''; line2.style.opacity = ''; line3.style.transform = '';
+        }));
+        document.getElementById('contactForm')?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const toast = document.getElementById('toast');
+            toast?.classList.add('show');
+            e.target.reset();
+            setTimeout(() => toast?.classList.remove('show'), 4000);
+        });
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('animate-fade-in-up'); });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('section > div').forEach(el => observer.observe(el));
+    </script>
+</body>
+</html>

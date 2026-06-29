@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+*.egg
+*.whl
+dist/
+build/
+build_temp/
+*.spec
+
+# Virtual environment
+venv/
+.env/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Temp / test artifacts
+extract_test/
+test_*.json
+
+# Project specific - runtime data (keep key for license gen)
+data/arch.db
+data/arch.db-shm
+data/arch.db-wal
+data/arch.log
+data/backups/
+data/archives/

@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <rect width="1280" height="720" fill="#0f172a"/>
+  <rect x="30" y="20" width="1220" height="60" rx="12" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+  <text x="60" y="58" fill="#f59e0b" font-size="22" font-weight="bold" font-family="sans-serif">📦 Archiver</text>
+  <text x="1000" y="58" fill="#94a3b8" font-size="14" font-family="sans-serif">لوحة التحكم</text>
+  <text x="1100" y="58" fill="#94a3b8" font-size="14" font-family="sans-serif">الأرشيفات</text>
+  <text x="1190" y="58" fill="#f59e0b" font-size="14" font-weight="bold" font-family="sans-serif">الإعدادات</text>
+  <rect x="30" y="100" width="1220" height="600" rx="14" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+  <text x="60" y="140" fill="#f8fafc" font-size="20" font-weight="bold" font-family="sans-serif">الإعدادات</text>
+  <!-- License card -->
+  <rect x="60" y="160" width="560" height="160" rx="12" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+  <text x="80" y="190" fill="#f59e0b" font-size="16" font-weight="bold" font-family="sans-serif">🔑 الترخيص</text>
+  <text x="80" y="215" fill="#94a3b8" font-size="13" font-family="sans-serif">الحالة: نشط</text>
+  <text x="80" y="240" fill="#94a3b8" font-size="13" font-family="sans-serif">النوع: سنوي</text>
+  <text x="80" y="265" fill="#94a3b8" font-size="13" font-family="sans-serif">تاريخ الانتهاء: 2027-06-27</text>
+  <rect x="440" y="268" width="160" height="34" rx="8" fill="#f59e0b"/>
+  <text x="520" y="290" text-anchor="middle" fill="#0f172a" font-size="13" font-weight="bold" font-family="sans-serif">تفعيل</text>
+  <!-- Users card -->
+  <rect x="640" y="160" width="580" height="160" rx="12" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+  <text x="660" y="190" fill="#f59e0b" font-size="16" font-weight="bold" font-family="sans-serif">👥 المستخدمين</text>
+  <rect x="660" y="210" width="540" height="34" rx="8" fill="#334155"/>
+  <text x="680" y="233" fill="#94a3b8" font-size="13" font-family="sans-serif">admin</text><text x="850" y="233" fill="#22c55e" font-size="12">مدير</text>
+  <rect x="660" y="252" width="540" height="34" rx="8" fill="#334155"/>
+  <text x="680" y="275" fill="#94a3b8" font-size="13" font-family="sans-serif">user1</text><text x="850" y="275" fill="#f59e0b" font-size="12">مستخدم</text>
+  <rect x="1060" y="288" width="140" height="28" rx="8" fill="#f59e0b"/>
+  <text x="1130" y="308" text-anchor="middle" fill="#0f172a" font-size="12" font-weight="bold" font-family="sans-serif">+ إضافة</text>
+  <!-- Backup card -->
+  <rect x="60" y="340" width="1160" height="120" rx="12" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+  <text x="80" y="370" fill="#f59e0b" font-size="16" font-weight="bold" font-family="sans-serif">💾 النسخ الاحتياطي</text>
+  <text x="80" y="395" fill="#94a3b8" font-size="13" font-family="sans-serif">آخر نسخة: 2026-06-27 12:00</text>
+  <rect x="1000" y="378" width="200" height="34" rx="8" fill="#f59e0b"/>
+  <text x="1100" y="400" text-anchor="middle" fill="#0f172a" font-size="13" font-weight="bold" font-family="sans-serif">إنشاء نسخة احتياطية</text>
+  <!-- Database card -->
+  <rect x="60" y="480" width="1160" height="120" rx="12" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+  <text x="80" y="510" fill="#f59e0b" font-size="16" font-weight="bold" font-family="sans-serif">🗄️ قاعدة البيانات</text>
+  <rect x="1000" y="498" width="200" height="34" rx="8" fill="#f59e0b"/>
+  <text x="1100" y="520" text-anchor="middle" fill="#0f172a" font-size="13" font-weight="bold" font-family="sans-serif">تصدير</text>
+</svg>
